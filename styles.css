@@ -1,0 +1,70 @@
+html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: sans-serif;
+    }
+
+    core-scaffold {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    .content {
+      background-color: #fff;
+      height: 5000px;
+      padding: 20px;
+    }
+
+    /* some default styles for mode="cover" on core-scaffold */
+    core-scaffold[mode=cover]::shadow core-header-panel::shadow #mainContainer {
+      left: 120px;
+    }
+
+    core-scaffold[mode=cover] .content {
+      margin: 20px 100px 20px 0;
+    }
+
+ /* FAB */
+    .fab {
+      position: relative;
+      display: inline-block;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      color: #fff;
+      overflow: hidden;
+      transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition-delay: 0.2s;
+      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    }
+
+    .fab.red {
+      background-color: #d23f31;
+    }
+
+    .fab.blue {
+      background-color: #4285f4;
+    }
+
+    .fab.green {
+      background-color: #0f9d58;
+    }
+
+    .fab:active {
+      box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
+      transition-delay: 0s;
+    }
+
+    .fab > core-icon {
+      margin: 16px;
+    }
+
+    .fab > core-icon::shadow path {
+      fill: #fff;
+    }
