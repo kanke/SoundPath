@@ -7,18 +7,22 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
 
-
-  <script src="https://www.polymer-project.org/components/platform/platform.js"></script>
-  <link rel="import" href="bower_components/core-icons/av-icons.html">
+  <script src="bower_components/webcomponentsjs/webcomponents.js"></script>
+  <link rel="import" href="bower_components/polymer/polymer.html">
+  <link rel="import" href="bower_components/paper-elements/paper-elements.html">
+  <link rel="import" href="bower_components/core-elements/core-elements.html">
   <link rel="import" href="bower_components/core-icon/core-icon.html">
-  <link rel="import" href="https://www.polymer-project.org/components/polymer/polymer.html">
-  <link rel="import" href="https://www.polymer-project.org/components/paper-elements/paper-elements.html">
-  <link rel="import" href="https://www.polymer-project.org/components/core-elements/core-elements.html">
-
-
+  <link rel="import" href="bower_components/core-icons/core-icons.html">
+  <link rel="import" href="bower_components/core-icons/av-icons.html">
+  <link rel="import" href="components/track-player.html">
   <link rel="stylesheet" href="styles.css">
 
-
+  <script src="https://maps.googleapis.com/maps/api/js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.1.js"></script>
+  <script src="https://connect.soundcloud.com/sdk.js"></script>
+  <script src="vendor/q.js"></script>
+  <script src="src/service.js"></script>
+  <script src="src/app.js"></script>
 </head>
 <body unresolved>
 
@@ -27,38 +31,22 @@
     <core-header-panel navigation flex mode="seamed">
       <core-toolbar style="background-color: #526E9C; color: #fff;"></core-toolbar>
       <core-menu>
-        <core-item icon="genres" label="Hip Hop"></core-item>
-        <core-item icon="genres" label="R&B"></core-item>
-        <core-item icon="genres" label="Folk"></core-item>
-        <core-item icon="genres" label="Slow"></core-item>
+        <core-item icon="av:genres" label="Hip Hop"></core-item>
+        <core-item icon="av:genres" label="R&B"></core-item>
+        <core-item icon="av:genres" label="Folk"></core-item>
+        <core-item icon="av:genres" label="Slow"></core-item>
         <paper-item label="Edit Species" center horizontal layout flex>
-          <a href="/speciesEdit"></a>
+          <a href="/speciesEdit">Edit Species</a>
         </paper-item>
       </core-menu>
     </core-header-panel>
 
     <div tool>Sound Path</div>
 
-    <div class="content">
-      <section>
-
-        <div class="fab red">
-          <core-icon icon="add"></core-icon>
-          <paper-ripple class="circle recenteringTouch" fit></paper-ripple>
-        </div>
-
-        <div class="fab blue">
-          <core-icon icon="mail"></core-icon>
-          <paper-ripple class="circle recenteringTouch" fit></paper-ripple>
-        </div>
-
-        <div class="fab green">
-          <core-icon icon="create"></core-icon>
-          <paper-ripple class="circle recenteringTouch" fit></paper-ripple>
-        </div>
-
-      </section>
+    <div class="content" style="height:600px">
+      <div id="map-canvas" style="height:100%"></div>
     </div>
+    <soundpath-track-player></soundpath-track-player>
 
   </core-scaffold>
 </body>
