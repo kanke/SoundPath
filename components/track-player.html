@@ -1,0 +1,65 @@
+<polymer-element name="soundpath-track-player">
+  <template>
+    <style>
+      :host {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 80px;
+        background-color: white;
+        border-top: 1px solid lightgray;
+        z-index: 11;
+      }
+
+      paper-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background-color: green;
+      }
+    </style>
+
+    <paper-button class="colored" on-click="{{forceDrop}}">{{currentTrack.title}}</paper-button>
+    <paper-fab icon="av:skip-next" role="button" on-click="{{onClick}}"></paper-fab>
+    <audio id="track-player"></audio>
+  </template>
+
+  <script>
+    Polymer({
+      ready: function () {
+        this.audio = this.shadowRoot.querySelector('#track-player');
+        this.playTrack = function (track, skipped) {
+          var oldTrack = this.currentTrack;
+          this.currentTrack = track;
+          this.audio.src = track.stream_url + '?client_id=cc6b70490609b09c4435861aff11fc6c';
+          this.audio.play();
+          this.fire('trackchange', {
+            previousTrack: this.currentTrack,
+            currentTrack: track,
+            skipped: skipped,
+          });
+          console.log('NOW PLAYING', track.title);
+        }.bind(this);
+
+        this.audio.addEventListener('ended', function (event) {
+          this.playTrack(soundpath.Service.nextTrack());
+        }.bind(this));
+
+        soundpath.Service.seedTracks({ q: 'Linkin Park' })
+          .then(function () {
+            this.playTrack(soundpath.Service.nextTrack(), true);
+          }.bind(this));
+      },
+
+      onClick: function (event, detail, sender) {
+        console.log('SKIPPING', this.currentTrack.title);
+        this.playTrack(soundpath.Service.nextTrack(), true);
+      },
+
+      forceDrop: function (event, detail, sender) {
+        this.playTrack(soundpath.Service.nextTrack());
+      }
+    });
+  </script>
+</polymer-element>
