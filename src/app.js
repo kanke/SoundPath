@@ -2,24 +2,6 @@
   'use strict';
 
   function initialize() {
-/**************USE ME BYRAN************
-    var Music = Parse.Object.extend("Music");
-    var query = new Parse.Query(Music);
-    query.get("u85iVF1ZHg", {
-    success: function(music) {
-      window.alert(music.get("genre"));
-
-      // The object was retrieved successfully.
-  },
-  error: function(object, error) {
-    alert("Error: " + error.code + " " + error.message);
-    // The object was not retrieved successfully.
-    // error is a Parse.Error with an error code and message.
-  }
-});
-
-MORE----->> https://parse.com/docs/js_guide#objects
-/***************************************/
     var stylesArray = [{"featureType":"water","stylers":[{"visibility":"on"},{"color":"#acbcc9"}]},{"featureType":"landscape","stylers":[{"color":"#f2e5d4"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#c5c6c6"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#e4d7c6"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#fbfaf7"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#c5dac6"}]},{"featureType":"administrative","stylers":[{"visibility":"on"},{"lightness":33}]},{"featureType":"road"},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":20}]},{},{"featureType":"road","stylers":[{"lightness":20}]}];
 
     var currentLocation = soundpath.Geolocation.currentLocation(),
@@ -46,11 +28,16 @@ MORE----->> https://parse.com/docs/js_guide#objects
       marker.setPosition(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
     });
 
-    function circleMarker() {
-      marker.setPosition(new google.maps.LatLng(myLatlng.lat() + 0.01*(- 0.5 + Math.random()), myLatlng.lng() + 0.01*(- 0.5 + Math.random())));
-      setTimeout(circleMarker, 1500);
+
+    function addMarkerForDroppedTrack(track) {
+      markers.push(new google.maps.Marker({
+        position: new google.maps.LatLng(track.latitude, track.longitude),
+        map: map,
+        track: track,
+        title: track.title,
+        icon: 'assets/marker-icon-5.png',
+      }));
     }
-    circleMarker();
 
 
     document.addEventListener('trackchange', function (event) {
@@ -65,14 +52,42 @@ MORE----->> https://parse.com/docs/js_guide#objects
 
 
     soundpath.Service.on('track:dropped', function (track, option) {
-      var pos = marker.getPosition();
-      new google.maps.Marker({
-        position: new google.maps.LatLng(pos.lat(), pos.lng()),
-        map: map,
-        title: track.title,
-        icon: 'assets/marker-icon-5.png',
+      addMarkerForDroppedTrack(track);
+    });
+
+
+    $('.paperbox').on('click', function () {
+      var $clicked = $(this);
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setVisible(false);
+      }
+
+      $.each($('.paperbox'), function () {
+        if ((!$(this).attr('checked') && $(this).data('genre') !== $clicked.data('genre'))
+           || ($(this).attr('checked') && $(this).data('genre') === $clicked.data('genre'))) {
+          return;
+        }
+
+        var regex = new RegExp($(this).data('genre'), 'i');
+        for (var i = 0; i < markers.length; i++) {
+          if (regex.test(markers[i].track.genre)) {
+            markers[i].setVisible(true);
+          }
+        }
       });
     });
+
+
+    soundpath.Service.ready()
+      .then(function () {
+        soundpath.Service.droppedTracks()
+          .then(function (tracks) {
+            console.log(3, tracks);
+            for (var i = 0; i < tracks.length; i++) {
+              addMarkerForDroppedTrack(tracks[i]);
+            }
+          });
+      });
   }
 
   google.maps.event.addDomListener(window, 'polymer-ready', initialize);

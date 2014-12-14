@@ -28,22 +28,26 @@
       }
     </style>
 
-    <paper-button class="colored" on-click="{{forceDrop}}">{{ currentTrack.artist }} &ndash; {{ currentTrack.title }}</paper-button>
+    <paper-button class="colored" on-click="{{forceDrop}}">
+      <!-- <img src="{{ currentTrack.waveform_url }}" alt="" style="width:50px;height:50px;"> -->
+      {{ currentTrack.artist }} &ndash; {{ currentTrack.title }}
+    </paper-button>
     <ul>
       <li>
         <paper-fab mini class="red" icon="av:skip-next" role="button" on-click="{{skipTrack}}"></paper-fab>
       </li>
       <li>
-        <paper-fab class="red" icon="av:{{ audio.paused ? 'pause' : 'play-arrow' }}" role="button" on-click="{{togglePlay}}"></paper-fab>
+        <paper-fab class="red" icon="av:{{ !audio.paused ? 'play-arrow' : 'pause' }}" role="button" on-click="{{togglePlay}}"></paper-fab>
       </li>
     </ul>
-    <audio id="track-player"></audio>
+    <audio preload="auto" id="track-player"></audio>
   </template>
 
   <script>
     Polymer({
-      ready: function () {
+      domReady: function () {
         this.audio = this.shadowRoot.querySelector('#track-player');
+
         this.playTrack = function (track, skipped) {
           var oldTrack = this.currentTrack;
           this.currentTrack = track;
@@ -57,11 +61,21 @@
           console.log('NOW PLAYING', track.title);
         }.bind(this);
 
+
         this.audio.addEventListener('ended', function (event) {
           soundpath.Service.nextTrack().then(function (track) {
             this.playTrack(track);
           }.bind(this));
         }.bind(this));
+
+
+        this.audio.addEventListener('error', function (event) {
+          console.error('AUDIO ERROR', event.target.error);
+          soundpath.Service.nextTrack().then(function (track) {
+            this.playTrack(track, true);
+          }.bind(this));
+        }.bind(this));
+
 
         soundpath.Service.ready()
           .then(function () {

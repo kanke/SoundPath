@@ -67,12 +67,14 @@ window.soundpath.Service = (function (Q, SC, Parse) {
   var exports = {},
       initDeferred = Q.defer(),
       listeners = {},
+      cachedDroppedTracks = [],
+      trackHistory = [],
       cachedTracks = [],
       CLIENT_ID = 'cc6b70490609b09c4435861aff11fc6c';
 
   SC.initialize({
       client_id: CLIENT_ID,
-      redirect_uri: 'http://localhost:3000'
+      redirect_uri: window.location.origin,
   });
 
 
@@ -80,16 +82,25 @@ window.soundpath.Service = (function (Q, SC, Parse) {
   var Music = Parse.Object.extend("Music");
   var query = new Parse.Query(Music);
 
-  query.find({
+  function soundCloudToSoundPath(track) {
+    return {
+      soundcloud_id: track.attributes.soundcloud_id,
+      title: track.attributes.song_title,
+      genre: track.attributes.genre,
+      artist: track.attributes.artist,
+      stream_url: track.attributes.stream_url,
+      parse_object: track,
+      latitude: track.attributes.latitude,
+      longitude: track.attributes.longitude,
+      // waveform_url: track.attributes.waveform_url,
+    };
+  }
+
+  query.doesNotExist('latitude').find({
     success: function(tracks) {
       for (var i = 0; i < tracks.length; i++) {
         var track = tracks[i];
-        cachedTracks.push({
-          title: track.attributes.song_title,
-          genre: track.attributes.stream_url,
-          artist: track.attributes.artist,
-          stream_url: track.attributes.stream_url,
-        });
+        cachedTracks.push(soundCloudToSoundPath(track));
       }
 
       initDeferred.resolve();
@@ -123,18 +134,89 @@ window.soundpath.Service = (function (Q, SC, Parse) {
   exports.dropTrack = function (track, options) {
     console.log(track.title, 'DROPPED AT', options.latitude, options.longitude);
 
-    var list = listeners['track:dropped'] || [];
+    track.latitude = options.latitude;
+    track.longitude = options.longitude;
+    track.parse_object.set('latitude', options.latitude);
+    track.parse_object.set('longitude', options.longitude);
+    track.parse_object.save();
 
+    var list = listeners['track:dropped'] || [];
     for (var i = 0; i < list.length; i++) {
       list[i](track, options);
     }
   };
 
 
-  exports.nextTrack = function () {
-    var deferred = Q.defer();
+  exports.droppedTracks = function () {
+    var deferred = Q.defer(),
+        query = new Parse.Query(Music);
 
-    deferred.resolve(cachedTracks.shift());
+    query.find({
+      success: function (tracks) {
+        var array = [];
+        for (var i = 0; i < tracks.length; i++) {
+          if (tracks[i].attributes.longitude) {
+            array.push(soundCloudToSoundPath(tracks[i]))
+          }
+        }
+
+        cachedDroppedTracks = array;
+        deferred.resolve(array);
+      },
+      error: function () {
+        deferred.reject();
+      }
+    });
+
+
+    return deferred.promise;
+  };
+
+
+  function getClosestDrop(coords) {
+    if (!cachedDroppedTracks.length) {
+      return undefined;
+    }
+
+    var index = 0,
+        dx = (coords.latitude - cachedDroppedTracks[index].latitude),
+        dy =  (coords.longitude - cachedDroppedTracks[index].longitude),
+        dist = dx*dx + dy*dy;
+
+    for (var i = 1; i < cachedDroppedTracks.length; i++) {
+      var dx2 = (coords.latitude - cachedDroppedTracks[i].latitude),
+          dy2 =  (coords.longitude - cachedDroppedTracks[i].longitude),
+          dist2 = dx2*dx2 + dy2*dy2;
+
+      if (dist2 < dist) {
+        dist = dist2;
+        index = i;
+      }
+    }
+
+
+    return cachedDroppedTracks.splice(index, 1)[0];
+  }
+
+
+  exports.nextTrack = function () {
+    var deferred = Q.defer(),
+        candidate = getClosestDrop(soundpath.Geolocation.currentLocation().coords);
+
+    while (candidate) {
+      if (trackHistory.indexOf(candidate.soundcloud_id) === -1) {
+        trackHistory.push(candidate.soundcloud_id);
+        break;
+      } else {
+        candidate = getClosestDrop(soundpath.Geolocation.currentLocation().coords);
+      }
+    }
+
+    if (!candidate) {
+      candidate = cachedTracks.unshift();
+    }
+
+    deferred.resolve(candidate);
 
     return deferred.promise;
   };

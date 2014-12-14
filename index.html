@@ -19,6 +19,7 @@
 
   <script src="https://maps.googleapis.com/maps/api/js"></script>
   <script src="https://connect.soundcloud.com/sdk.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.1.js"></script>
   <script src="https://www.parsecdn.com/js/parse-1.3.2.min.js"></script>
   <script src="vendor/q.js"></script>
   <script src="src/service.js"></script>
@@ -32,29 +33,26 @@
       <core-toolbar style="background-color: #526E9C; color: #fff;"></core-toolbar>
       <core-menu>
         <section>
-          <core-label center horizontal layout>
-            <h3 flex>Filtering</h3>
-            <paper-checkbox class="blue" role="checkbox"></paper-checkbox>
-          </core-label>
+          <h3 flex>Filtering</h3>
 
           <core-label center horizontal layout>
             <div flex>Alternative</div>
-            <paper-checkbox class="blue" role="checkbox"></paper-checkbox>
+            <paper-checkbox checked data-genre="Alternative" class="blue paperbox" role="checkbox"></paper-checkbox>
           </core-label>
 
           <core-label center horizontal layout>
             <div flex>Rock</div>
-            <paper-checkbox class="blue" role="checkbox"></paper-checkbox>
+            <paper-checkbox checked data-genre="Rock" class="blue paperbox" role="checkbox"></paper-checkbox>
           </core-label>
 
           <core-label center horizontal layout>
             <div flex>Pop</div>
-            <paper-checkbox class="blue" role="checkbox"></paper-checkbox>
+            <paper-checkbox checked data-genre="Pop" class="blue paperbox" role="checkbox"></paper-checkbox>
           </core-label>
 
           <core-label center horizontal layout>
             <div flex>Hip Hop</div>
-            <paper-checkbox class="blue" role="checkbox"></paper-checkbox>
+            <paper-checkbox checked data-genre="Hip Hop" class="blue paperbox" role="checkbox"></paper-checkbox>
           </core-label>
         </section>
       </core-menu>
