@@ -27,6 +27,27 @@
       setTimeout(circleMarker, 1500);
     }
     circleMarker();
+
+
+    document.addEventListener('trackchange', function (event) {
+      if (!event.detail.skipped) {
+        var pos = marker.getPosition();
+        soundpath.Service.dropTrack(event.detail.previousTrack, {
+          latitude: pos.lat(),
+          longitude: pos.lng(),
+        });
+      }
+    });
+
+
+    soundpath.Service.on('track:dropped', function (track, option) {
+      var pos = marker.getPosition();
+      new google.maps.Marker({
+        position: new google.maps.LatLng(pos.lat(), pos.lng()),
+        map: map,
+        title: track.title,
+      });
+    });
   }
 
   google.maps.event.addDomListener(window, 'polymer-ready', initialize);

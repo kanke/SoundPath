@@ -4,6 +4,7 @@ window.soundpath.Service = (function (Q) {
   'use strict';
 
   var exports = {},
+      listeners = {},
       cachedTracks = [],
       CLIENT_ID = 'cc6b70490609b09c4435861aff11fc6c';
 
@@ -34,8 +35,20 @@ window.soundpath.Service = (function (Q) {
   };
 
 
+  exports.on = function (key, callback) {
+    listeners[key] = listeners[key] || [];
+    listeners[key].push(callback);
+  };
+
+
   exports.dropTrack = function (track, options) {
     console.log(track.title, 'DROPPED AT', options.latitude, options.longitude);
+
+    var list = listeners['track:dropped'] || [];
+
+    for (var i = 0; i < list.length; i++) {
+      list[i](track, options);
+    }
   };
 
 
