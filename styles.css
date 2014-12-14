@@ -15,6 +15,11 @@ core-scaffold {
   left: 0;
 }
 
+core-label {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
 .content {
   background-color: #fff;
   height: 5000px;

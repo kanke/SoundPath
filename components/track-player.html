@@ -28,7 +28,7 @@
       }
     </style>
 
-    <paper-button class="colored" on-click="{{forceDrop}}">{{currentTrack.title}}</paper-button>
+    <paper-button class="colored" on-click="{{forceDrop}}">{{ currentTrack.artist }} &ndash; {{ currentTrack.title }}</paper-button>
     <ul>
       <li>
         <paper-fab mini class="red" icon="av:skip-next" role="button" on-click="{{skipTrack}}"></paper-fab>
@@ -63,7 +63,7 @@
           }.bind(this));
         }.bind(this));
 
-        soundpath.Service.seedTracks({ q: 'Linkin Park' })
+        soundpath.Service.ready()
           .then(function () {
             soundpath.Service.nextTrack().then(function (track) {
               this.playTrack(track, true);
