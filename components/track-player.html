@@ -8,14 +8,50 @@
         bottom: 0;
         height: 80px;
         background-color: white;
-        z-index: 100;
         border-top: 1px solid lightgray;
       }
+
+      paper-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background-color: green;
+      }
     </style>
+
+    <paper-fab icon="av:skip-next" role="button" on-click="{{onClick}}"></paper-fab>
+    <audio id="track-player"></audio>
   </template>
 
   <script>
     Polymer({
+      ready: function () {
+        this.audio = this.shadowRoot.querySelector('#track-player');
+        this.playTrack = function (track) {
+          this.currentTrack = track;
+          this.audio.src = track.stream_url + '?client_id=cc6b70490609b09c4435861aff11fc6c';
+          this.audio.play();
+          console.log('NOW PLAYING', track.title);
+        }.bind(this);
+
+        this.audio.addEventListener('ended', function (event) {
+          soundpath.Service.dropTrack(this.currentTrack, {
+            latitude: 0.0,
+            longitude: 0.0,
+          });
+
+          this.playTrack(soundpath.Service.nextTrack());
+        }.bind(this));
+
+        soundpath.Service.seedTracks({ q: 'Linkin Park' })
+          .then(function () {
+            this.playTrack(soundpath.Service.nextTrack());
+          }.bind(this));
+      },
+      onClick: function (event, detail, sender) {
+        console.log('SKIPPING', this.currentTrack.title);
+        this.playTrack(soundpath.Service.nextTrack());
+      }
     });
   </script>
 </polymer-element>

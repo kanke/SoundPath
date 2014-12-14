@@ -27,37 +27,6 @@
       setTimeout(circleMarker, 1500);
     }
     circleMarker();
-
-
-    var $audio = $('#app-player');
-    function playTrack(track) {
-      $audio[0].src = track.stream_url + '?client_id=cc6b70490609b09c4435861aff11fc6c';
-      $audio[0].play();
-      console.log('NOW PLAYING', track.title);
-    }
-
-
-    soundpath.Service.seedTracks({ q: 'Linkin Park' })
-      .then(function () {
-        var track = soundpath.Service.nextTrack();
-        playTrack(track);
-
-        $audio.on('ended', function () {
-          var pos = marker.getPosition();
-          soundpath.Service.dropTrack(track, {
-            latitude: pos.lat(),
-            longitude: pos.lng(),
-          });
-          new google.maps.Marker({
-            position: new google.maps.LatLng(pos.lat(), pos.lng()),
-            map: map,
-            title: track.title,
-          });
-
-          track = soundpath.Service.nextTrack();
-          playTrack(track);
-        });
-      });
   }
 
   google.maps.event.addDomListener(window, 'polymer-ready', initialize);
