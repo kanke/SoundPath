@@ -1,4 +1,4 @@
-(function ($, document) {
+(function (document) {
   'use strict';
 
   function initialize() {
@@ -8,6 +8,7 @@
       center: { lat: myLatlng.lat(), lng: myLatlng.lng() },
       zoom: 13,
       styles: stylesArray,
+      disableDefaultUI: true,
     };
     var map = new google.maps.Map(document.getElementById('map-canvas'),
                                   mapOptions);
@@ -17,7 +18,6 @@
       position: myLatlng,
       map: map,
       title: 'Hello World!',
-      // icon: 'http://img3.wikia.nocookie.net/__cb20090314214419/ladygaga/images/2/28/Song_Icon.png',
     });
     var markers = [];
 
@@ -46,9 +46,10 @@
         position: new google.maps.LatLng(pos.lat(), pos.lng()),
         map: map,
         title: track.title,
+        icon: 'assets/marker-icon-1.png',
       });
     });
   }
 
   google.maps.event.addDomListener(window, 'polymer-ready', initialize);
-}).call(this, jQuery, document);
+}).call(this, document);

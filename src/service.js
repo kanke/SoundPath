@@ -53,7 +53,11 @@ window.soundpath.Service = (function (Q) {
 
 
   exports.nextTrack = function () {
-    return cachedTracks.shift();
+    var deferred = Q.defer();
+
+    deferred.resolve(cachedTracks.shift());
+
+    return deferred.promise;
   };
 
 
