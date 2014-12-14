@@ -1,4 +1,4 @@
-(function ($, document) {
+(function (document) {
   'use strict';
 
   function initialize() {
@@ -22,13 +22,13 @@
 
 MORE----->> https://parse.com/docs/js_guide#objects
 /***************************************/
-
     var stylesArray = [{"featureType":"water","stylers":[{"visibility":"on"},{"color":"#acbcc9"}]},{"featureType":"landscape","stylers":[{"color":"#f2e5d4"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#c5c6c6"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#e4d7c6"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#fbfaf7"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#c5dac6"}]},{"featureType":"administrative","stylers":[{"visibility":"on"},{"lightness":33}]},{"featureType":"road"},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":20}]},{},{"featureType":"road","stylers":[{"lightness":20}]}];
     var myLatlng = new google.maps.LatLng(51.5033630, -0.1276250);
     var mapOptions = {
       center: { lat: myLatlng.lat(), lng: myLatlng.lng() },
       zoom: 13,
       styles: stylesArray,
+      disableDefaultUI: true,
     };
     var map = new google.maps.Map(document.getElementById('map-canvas'),
                                   mapOptions);
@@ -38,7 +38,6 @@ MORE----->> https://parse.com/docs/js_guide#objects
       position: myLatlng,
       map: map,
       title: 'Hello World!',
-      // icon: 'http://img3.wikia.nocookie.net/__cb20090314214419/ladygaga/images/2/28/Song_Icon.png',
     });
     var markers = [];
 
@@ -67,9 +66,10 @@ MORE----->> https://parse.com/docs/js_guide#objects
         position: new google.maps.LatLng(pos.lat(), pos.lng()),
         map: map,
         title: track.title,
+        icon: 'assets/marker-icon-1.png',
       });
     });
   }
 
   google.maps.event.addDomListener(window, 'polymer-ready', initialize);
-}).call(this, jQuery, document);
+}).call(this, document);

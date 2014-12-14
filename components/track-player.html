@@ -12,16 +12,31 @@
         z-index: 11;
       }
 
-      paper-fab {
+      ul {
         position: fixed;
         right: 20px;
         bottom: 20px;
-        background-color: green;
+        list-style: none;
+      }
+
+      li {
+        padding: 7px;
+      }
+
+      li:last-child {
+        padding: 0;
       }
     </style>
 
     <paper-button class="colored" on-click="{{forceDrop}}">{{currentTrack.title}}</paper-button>
-    <paper-fab icon="av:skip-next" role="button" on-click="{{onClick}}"></paper-fab>
+    <ul>
+      <li>
+        <paper-fab mini class="red" icon="av:skip-next" role="button" on-click="{{skipTrack}}"></paper-fab>
+      </li>
+      <li>
+        <paper-fab class="red" icon="av:{{ audio.paused ? 'pause' : 'play-arrow' }}" role="button" on-click="{{togglePlay}}"></paper-fab>
+      </li>
+    </ul>
     <audio id="track-player"></audio>
   </template>
 
@@ -43,23 +58,41 @@
         }.bind(this);
 
         this.audio.addEventListener('ended', function (event) {
-          this.playTrack(soundpath.Service.nextTrack());
+          soundpath.Service.nextTrack().then(function (track) {
+            this.playTrack(track);
+          }.bind(this));
         }.bind(this));
 
         soundpath.Service.seedTracks({ q: 'Linkin Park' })
           .then(function () {
-            this.playTrack(soundpath.Service.nextTrack(), true);
+            soundpath.Service.nextTrack().then(function (track) {
+              this.playTrack(track, true);
+            }.bind(this));
           }.bind(this));
       },
 
-      onClick: function (event, detail, sender) {
-        console.log('SKIPPING', this.currentTrack.title);
-        this.playTrack(soundpath.Service.nextTrack(), true);
+
+      skipTrack: function (event, detail, sender) {
+        soundpath.Service.nextTrack().then(function (track) {
+          this.playTrack(track, true);
+        }.bind(this));
       },
 
+
       forceDrop: function (event, detail, sender) {
-        this.playTrack(soundpath.Service.nextTrack());
-      }
+        soundpath.Service.nextTrack().then(function (track) {
+          this.playTrack(track);
+        }.bind(this));
+      },
+
+
+      togglePlay: function (event, detail, sender) {
+        if (this.audio.paused) {
+          this.audio.play();
+        } else {
+          this.audio.pause();
+        }
+      },
     });
   </script>
 </polymer-element>
