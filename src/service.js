@@ -104,6 +104,17 @@ window.soundpath.Service = (function (Q, SC, Parse) {
       }
 
       initDeferred.resolve();
+
+      // (new Parse.Query(Music)).find().then(function (tracks) {
+      //   var coords = soundpath.Geolocation.currentLocation().coords;
+      //   console.log(100, tracks);
+      //
+      //   for (var i = 0; i < tracks.length/2; i++) {
+      //     tracks[i].set('latitude', null);
+      //     tracks[i].set('longitude', null);
+      //     tracks[i].save();
+      //   }
+      // });
     }
   });
 

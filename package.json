@@ -1,0 +1,23 @@
+{
+  "name": "sound-path",
+  "version": "0.0.1",
+  "description": "Go to the directory and run:",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kanke/sound-path.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kanke/sound-path/issues"
+  },
+  "homepage": "https://github.com/kanke/sound-path",
+  "devDependencies": {
+    "gulp": "^3.8.10",
+    "gulp-connect": "^2.2.0"
+  }
+}
